@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import android.webkit.WebView
 import com.braze.Braze
 import com.braze.BrazeUser
 import com.braze.configuration.BrazeConfig
@@ -1018,7 +1019,7 @@ open class BrazePlugin : CordovaPlugin() {
                     // Send in-app message string back to JavaScript in an `inAppMessageReceived` event
                     val jsStatement = "app.inAppMessageReceived('$inAppMessageString');"
                     cordova.activity.runOnUiThread {
-                        webView.engine.evaluateJavascript(jsStatement, null)
+                        (webView.getView() as WebView).evaluateJavascript(jsStatement, null)
                     }
 
                     return inAppMessageDisplayOperation
