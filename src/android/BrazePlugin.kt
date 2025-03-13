@@ -1034,6 +1034,8 @@ open class BrazePlugin : CordovaPlugin() {
                   // Convert button message to string
                   val buttonMessageClicked = escapeStringForJavaScript(button.forJsonPut().toString())
 
+                  brazelog { "In-app message button clicked: $inAppMessageString $buttonMessageClicked" }
+
                   // Send in-app message string and button back to JavaScript in an `onInAppMessageButtonClicked` event
                   val jsStatement = "app.inAppMessageButtonClicked('$inAppMessageString', '$buttonMessageClicked');"
                   cordova.activity.runOnUiThread {

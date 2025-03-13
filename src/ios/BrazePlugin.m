@@ -1401,4 +1401,28 @@ bool useBrazeUIForInAppMessages;
   }
 }
 
+// MARK: - BrazeInAppMessageUIDelegate
+
+- (BOOL)inAppMessage:(BrazeInAppMessageUI *)brazeInAppMessageUI
+       shouldProcess:(enum BRZInAppMessageRawClickAction)clickAction
+                     url:(NSURL *)uri
+                buttonId:(NSString *)buttonId
+                 message:(BRZInAppMessageRaw *)message
+                    view:(UIView *)view {
+    // Convert in-app message to string
+    if (isInAppMessageSubscribed) {
+      NSData *inAppMessageData = [message json];
+      NSString *inAppMessageString = [[NSString alloc] initWithData:inAppMessageData encoding:NSUTF8StringEncoding];
+      inAppMessageString = [self escapeStringForJavaScript:inAppMessageString];
+      NSLog(@"In-app message button clicked: %@ %@", inAppMessageString, buttonId);
+
+      // Send in-app message string back to JavaScript in an `inAppMessageButtonClicked` event
+      NSString* jsStatement = [NSString stringWithFormat:@"app.inAppMessageButtonClicked('%@', '%@', '%@');", inAppMessageString, buttonId, uri];
+      [self.commandDelegate evalJs:jsStatement];
+    }
+
+    // Your implementation here
+    return YES; // or NO, depending on your logic
+}
+
 @end
