@@ -1026,6 +1026,22 @@ open class BrazePlugin : CordovaPlugin() {
 
                     return inAppMessageDisplayOperation
                 }
+
+                override fun onInAppMessageButtonClicked(inAppMessage: IInAppMessage, button: MessageButton): Boolean {
+                  // Convert in-app message to string
+                  val inAppMessageString = escapeStringForJavaScript(inAppMessage.forJsonPut().toString())
+
+                  // Convert button message to string
+                  val buttonMessageClicked = escapeStringForJavaScript(button.forJsonPut().toString())
+
+                  // Send in-app message string and button back to JavaScript in an `onInAppMessageButtonClicked` event
+                  val jsStatement = "app.inAppMessageButtonClicked('$inAppMessageString', '$buttonMessageClicked');"
+                  cordova.activity.runOnUiThread {
+                    (webView.getView() as WebView).evaluateJavascript(jsStatement, null)
+                  }
+
+                  return false
+                }
             }
         )
     }
