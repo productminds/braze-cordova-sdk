@@ -1068,7 +1068,7 @@ open class BrazePlugin : CordovaPlugin() {
                     brazelog { "In-app message clicked: $inAppMessageString" }
 
                     // Send in-app message string back to javascript on `inAppMessageClicked` event'
-                    val jsStatement = "app.inAppMessageClicked('$inAppMessageString', '$inAppMessageUri');"
+                    val jsStatement = "app.inAppMessageClicked('$inAppMessageString', undefined, '$inAppMessageUri');"
                     cordova.activity.runOnUiThread {
                       (webView.getView() as WebView).evaluateJavascript(jsStatement, null)
                     }
