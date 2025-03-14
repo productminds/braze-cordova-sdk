@@ -55,6 +55,8 @@ open class BrazePlugin : CordovaPlugin() {
     private var disableAutoStartSessions = false
     private val feedSubscriberMap: MutableMap<String, IEventSubscriber<FeedUpdatedEvent>> = ConcurrentHashMap()
     private var inAppMessageDisplayOperation: InAppMessageOperation = InAppMessageOperation.DISPLAY_NOW
+    private var inAppMessageClicksSubscribed = false
+    private var inAppMessageHandleClickActions = false
 
     override fun pluginInitialize() {
         applicationContext = cordova.activity.applicationContext
@@ -372,6 +374,13 @@ open class BrazePlugin : CordovaPlugin() {
                     }
                     setDefaultInAppMessageListener()
                 }
+            }
+            "subscribeToInAppMessageClicks" -> {
+              runOnBraze {
+                inAppMessageClicksSubscribed = true
+                val useBrazeActions = args.getBoolean(0)
+                inAppMessageHandleClickActions = !useBrazeActions
+              }
             }
             "hideCurrentInAppMessage" -> {
                 BrazeInAppMessageManager.getInstance().hideCurrentlyDisplayingInAppMessage(true)
@@ -1028,21 +1037,44 @@ open class BrazePlugin : CordovaPlugin() {
                 }
 
                 override fun onInAppMessageButtonClicked(inAppMessage: IInAppMessage, button: MessageButton): Boolean {
-                  // Convert in-app message to string
-                  val inAppMessageString = escapeStringForJavaScript(inAppMessage.forJsonPut().toString())
+                  if (inAppMessageClicksSubscribed) {
+                    // Convert in-app message to string
+                    val inAppMessageString = escapeStringForJavaScript(inAppMessage.forJsonPut().toString())
 
-                  // Convert button message to string
-                  val buttonMessageClicked = escapeStringForJavaScript(button.forJsonPut().toString())
+                    // Convert button message to string
+                    val buttonMessageClicked = escapeStringForJavaScript(button.forJsonPut().toString())
 
-                  brazelog { "In-app message button clicked: $inAppMessageString $buttonMessageClicked" }
+                    val buttonMessageUri = button.uri?.toString()
 
-                  // Send in-app message string and button back to JavaScript in an `onInAppMessageButtonClicked` event
-                  val jsStatement = "app.inAppMessageButtonClicked('$inAppMessageString', '$buttonMessageClicked');"
-                  cordova.activity.runOnUiThread {
-                    (webView.getView() as WebView).evaluateJavascript(jsStatement, null)
+                    brazelog { "In-app message button clicked: $inAppMessageString $buttonMessageClicked" }
+
+                    // Send in-app message string and button back to JavaScript in an `inAppMessageClicked` event
+                    val jsStatement = "app.inAppMessageClicked('$inAppMessageString', '$buttonMessageClicked', '$buttonMessageUri');"
+                    cordova.activity.runOnUiThread {
+                      (webView.getView() as WebView).evaluateJavascript(jsStatement, null)
+                    }
+                  }
+                  return inAppMessageHandleClickActions
+                }
+
+                override fun onInAppMessageClicked(inAppMessage: IInAppMessage): Boolean {
+                  if (inAppMessageClicksSubscribed) {
+                    // Convert in-app message to string
+                    val inAppMessageString = escapeStringForJavaScript(inAppMessage.forJsonPut().toString())
+
+                    // Getting message URI
+                    val inAppMessageUri = inAppMessage.uri?.toString()
+
+                    brazelog { "In-app message clicked: $inAppMessageString" }
+
+                    // Send in-app message string back to javascript on `inAppMessageClicked` event'
+                    val jsStatement = "app.inAppMessageClicked('$inAppMessageString', '$inAppMessageUri');"
+                    cordova.activity.runOnUiThread {
+                      (webView.getView() as WebView).evaluateJavascript(jsStatement, null)
+                    }
                   }
 
-                  return false
+                  return inAppMessageHandleClickActions
                 }
             }
         )
