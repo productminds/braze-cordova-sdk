@@ -18,7 +18,7 @@ This SDK additionally inherits the requirements of its underlying Braze native S
 * [Swift SDK requirements](https://github.com/braze-inc/braze-swift-sdk?tab=readme-ov-file#version-information)
 
 ## Installing the SDK
-#### ⚠ Braze does not publish the Cordova SDK to NPM or any other package manager. Do not use any installation method other than the commands listed below. ⚠
+#### ⚠ Only add the Braze Cordova SDK using the methods below. Do not attempt to install using other methods as it could lead to a security breach. ⚠
 ```
 # To use just the base SDK functionality, install using the `master` branch.
 cordova plugin add https://github.com/braze-inc/braze-cordova-sdk#master
