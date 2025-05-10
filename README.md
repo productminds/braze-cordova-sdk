@@ -1,6 +1,6 @@
 <img src="https://github.com/braze-inc/braze-cordova-sdk/blob/master/braze-logo.png" width="300" title="Braze Logo" />
 
-# Cordova SDK
+# Braze Cordova SDK
 
 Effective marketing automation is an essential part of successfully scaling and managing your business. Braze empowers you to build better customer relationships through a seamless, multi-channel approach that addresses all aspects of the user life cycle. Braze helps you engage your users on an ongoing basis. View the following resources for details and we'll have you up and running in no time!
 
@@ -17,8 +17,17 @@ This SDK additionally inherits the requirements of its underlying Braze native S
 * [Android SDK requirements](https://github.com/braze-inc/braze-android-sdk?tab=readme-ov-file#version-information)
 * [Swift SDK requirements](https://github.com/braze-inc/braze-swift-sdk?tab=readme-ov-file#version-information)
 
-## Running the sample application
+## Installing the SDK
+#### ⚠ Braze does not publish the Cordova SDK to NPM or any other package manager. Do not use any installation method other than the commands listed below. ⚠
+```
+# To use just the base SDK functionality, install using the `master` branch.
+cordova plugin add https://github.com/braze-inc/braze-cordova-sdk#master
 
+# To use location collection and geofences in addition to the base SDK functionality, install using `geofence-branch`.
+cordova plugin add https://github.com/braze-inc/braze-cordova-sdk#geofence-branch
+```
+
+## Running the sample application
 ```
 cordova plugin remove cordova-plugin-braze
 cordova plugin add https://github.com/braze-inc/braze-cordova-sdk#master
