@@ -286,13 +286,12 @@ bool useBrazeUIForInAppMessages;
 }
 
 - (void)getUserId:(CDVInvokedUrlCommand *)command {
-  [self.braze.user idWithCompletion:^(NSString * _Nullable userId) {
-    if (!userId) {
-      [self sendCordovaSuccessPluginResultAsNull:command];
-    } else {
-      [self sendCordovaSuccessPluginResultWithString:userId andCommand:command];
-    }
-  }];
+  NSString *userId = self.braze.user.identifier;
+  if (!userId) {
+    [self sendCordovaSuccessPluginResultAsNull:command];
+  } else {
+    [self sendCordovaSuccessPluginResultWithString:userId andCommand:command];
+  }
 }
 
 - (void)setSdkAuthenticationSignature:(CDVInvokedUrlCommand *)command {

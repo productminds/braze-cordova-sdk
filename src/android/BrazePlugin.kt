@@ -97,12 +97,16 @@ open class BrazePlugin : CordovaPlugin() {
             }
             "getUserId" -> {
                 runOnUser { 
-                    if (it.userId.isNullOrBlank()) {
+                    if (it.userId.isBlank()) {
                         callbackContext.sendCordovaSuccessPluginResultAsNull()
                     } else {
                         callbackContext.success(it.userId)
                     }
                 }
+                return true
+            }
+            "setSdkAuthenticationSignature" -> {
+                runOnBraze { it.setSdkAuthenticationSignature(args.getString(0)) }
                 return true
             }
             "logCustomEvent" -> {
@@ -156,7 +160,7 @@ open class BrazePlugin : CordovaPlugin() {
                 return true
             }
             "requestContentCardsRefresh" -> {
-                runOnBraze { it.requestContentCardsRefresh(false) }
+                runOnBraze { it.requestContentCardsRefresh() }
                 return true
             }
             "getDeviceId" -> {
@@ -959,9 +963,7 @@ open class BrazePlugin : CordovaPlugin() {
         }
 
         Braze.getInstance(applicationContext).subscribeToContentCardsUpdates(subscriber)
-        Braze.getInstance(applicationContext).requestContentCardsRefresh(
-            fromCache = action == GET_CONTENT_CARDS_FROM_CACHE_METHOD
-        )
+        Braze.getInstance(applicationContext).requestContentCardsRefreshFromCache()
         return true
     }
 

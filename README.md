@@ -20,7 +20,8 @@ This SDK additionally inherits the requirements of its underlying Braze native S
 ## Installing the SDK
 #### ⚠ Only add the Braze Cordova SDK using the methods below. Do not attempt to install using other methods as it could lead to a security breach. ⚠
 ```
-# To use just the base SDK functionality, install using the `master` branch.
+# To use the base SDK functionality, install using the `master` branch.
+
 cordova plugin add https://github.com/braze-inc/braze-cordova-sdk#master
 
 # To use location collection and geofences in addition to the base SDK functionality, install using `geofence-branch`.
